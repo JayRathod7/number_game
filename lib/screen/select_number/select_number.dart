@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:number_game/constant/app_string.dart';
 import 'package:number_game/screen/choose_number/number_select_screen.dart';
 import 'package:number_game/widgets/toast.dart';
 
@@ -45,7 +46,9 @@ class _SelectNumberState extends State<SelectNumber> {
                       containerColor: isPlayer1Enabled
                           ? Colors.greenAccent
                           : Colors.deepPurple,
-                      text: isPlayer1Enabled ? "player 1" : "player 2"),
+                      text: isPlayer1Enabled
+                          ? AppString.label.player1
+                          : AppString.label.player2),
                 ],
               )
             ],
@@ -119,8 +122,8 @@ class _SelectNumberState extends State<SelectNumber> {
   void clickOnNumber(index) {
     if (isPlayer1Enabled) {
       if ((index + 1) == widget.player2) {
-        showDialogBox(text: "Player 1");
-        print('player 1 won');
+        showDialogBox(text: AppString.label.player1);
+
         Timer(
             Duration(seconds: 3),
             () => Navigator.push(context,
@@ -129,8 +132,7 @@ class _SelectNumberState extends State<SelectNumber> {
       }
     } else if (!isPlayer1Enabled) {
       if ((index + 1) == widget.player1) {
-        showDialogBox(text: "Player 2");
-        print('player 2 won');
+        showDialogBox(text: AppString.label.player2);
         Timer(
             Duration(seconds: 3),
             () => Navigator.push(context,
@@ -142,7 +144,7 @@ class _SelectNumberState extends State<SelectNumber> {
     setState(() {});
   }
 
-  void showDialogBox({required String text}) => showDialog(
+  Future showDialogBox({required String text}) => showDialog(
       context: context,
       builder: (BuildContext context) {
         return Dialog(
@@ -159,7 +161,7 @@ class _SelectNumberState extends State<SelectNumber> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "won",
+                  AppString.label.winner,
                   style: TextStyle(
                       color: Colors.green,
                       fontSize: 36,

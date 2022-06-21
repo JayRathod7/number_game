@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:number_game/constant/app_string.dart';
 import 'package:number_game/screen/select_number/select_number.dart';
 import 'package:number_game/widgets/toast.dart';
 
@@ -27,7 +28,7 @@ class _ChooseNumberState extends State<ChooseNumber> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("please enter your mumber"),
+                Text(AppString.label.gameLabel),
                 SizedBox(height: 50.0),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -45,7 +46,7 @@ class _ChooseNumberState extends State<ChooseNumber> {
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "player 1",
+                              hintText: AppString.label.player1,
                               contentPadding: const EdgeInsets.all(20.0)),
                         ),
                       ),
@@ -64,7 +65,7 @@ class _ChooseNumberState extends State<ChooseNumber> {
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: "player 2",
+                              hintText: AppString.label.player2,
                               contentPadding: const EdgeInsets.all(20.0)),
                         ),
                       ),
@@ -77,7 +78,7 @@ class _ChooseNumberState extends State<ChooseNumber> {
                       validation();
                     },
                     child: Center(
-                      child: Text("Enter"),
+                      child: Text(AppString.gameButton),
                     )),
               ],
             ),
@@ -89,22 +90,22 @@ class _ChooseNumberState extends State<ChooseNumber> {
 
   void validation() {
     if (player1.text.isEmpty) {
-      showToast("player 1  enter your number");
+      showToast(AppString.validation.player1Empty);
       return;
     } else if (player2.text.isEmpty) {
-      showToast("player 2 enter your number");
+      showToast(AppString.validation.player2Empty);
       return;
     } else if (player1.text == player2.text) {
-      showToast("please select different number");
+      showToast(AppString.validation.chooseDifferentNumber);
       player2.clear();
       player1.clear();
       setState(() {});
     } else if (int.parse(player1.text) > 10 || int.parse(player1.text) == 0) {
-      showToast("player 1 please enter number out of 10 ");
+      showToast(AppString.validation.player1EnterNumber);
       player1.clear();
       return;
     } else if (int.parse(player2.text) > 10 || int.parse(player2.text) == 0) {
-      showToast("player 2 please enter number out of 10 ");
+      showToast(AppString.validation.player2EnterNumber);
       player2.clear();
       return;
     } else {
