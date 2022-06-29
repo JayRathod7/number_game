@@ -102,8 +102,9 @@ class _SelectNumberState extends State<SelectNumber> {
       );
 
   void clickOnNumber(index) {
+
     if (isPlayer1Enabled) {
-      if ((index + 1) == widget.player2) {
+      if (index + 1 == widget.player2) {
         showDialogBox(text: AppString.label.player1);
         Timer(
             const Duration(seconds: 2),
@@ -111,7 +112,7 @@ class _SelectNumberState extends State<SelectNumber> {
                 MaterialPageRoute(builder: (context) => ChooseNumber())));
       }
     } else if (!isPlayer1Enabled) {
-      if ((index + 1) == widget.player1) {
+      if (index + 1 == widget.player1) {
         showDialogBox(text: AppString.label.player2);
         Timer(
             Duration(seconds: 2),
@@ -120,7 +121,6 @@ class _SelectNumberState extends State<SelectNumber> {
       }
     }
     isPlayer1Enabled = !isPlayer1Enabled;
-    print("${isPlayer1Enabled}");
     list[index].isSelected = true;
     setState(() {});
   }
