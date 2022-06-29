@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:number_game/constant/app_string.dart';
 import 'package:number_game/screen/choose_number/number_select_screen.dart';
-import 'package:number_game/widgets/toast.dart';
+import 'package:number_game/screen/select_number/model/numberList.dart';
+import 'package:number_game/widgets/player_button.dart';
 
 class SelectNumber extends StatefulWidget {
   final int player1;
@@ -16,14 +17,19 @@ class SelectNumber extends StatefulWidget {
 }
 
 class _SelectNumberState extends State<SelectNumber> {
-  bool isClick = false;
-  int boxNumberIndex = 0;
   bool isPlayer1Enabled = false;
+  late List<ListItem<String>> list;
 
   @override
   void initState() {
     super.initState();
     isPlayer1Enabled = true;
+    populateData();
+  }
+
+  void populateData() {
+    list = [];
+    for (int i = 0; i < 10; i++) list.add(ListItem<String>("${i + 1}"));
   }
 
   @override
@@ -36,111 +42,86 @@ class _SelectNumberState extends State<SelectNumber> {
           padding: EdgeInsets.all(12.0),
           child: Column(
             children: [
-              _buildGridView(),
+              _buildGridView(context),
               SizedBox(height: 30),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  playerButton(
-                      borderColor: Colors.green,
-                      containerColor: isPlayer1Enabled
-                          ? Colors.greenAccent
-                          : Colors.deepPurple,
-                      text: isPlayer1Enabled
-                          ? AppString.label.player1
-                          : AppString.label.player2),
-                ],
-              )
+              playerLabel()
             ],
           )),
     );
   }
 
-  Widget _buildGridView() {
-    return GridView.builder(
-      itemCount: 10,
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12), color: Colors.red),
-          child: Center(
-              child: GestureDetector(
-            onTap: () {
-              clickOnNumber(index);
-            },
-            child: Container(
-              height: 50,
-              width: 50,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.black,
-                  )),
-              child: Center(
-                child: Text(
-                  "${index + 1}",
-                  style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.black),
-                ),
-              ),
-            ),
-          )),
-        );
-      },
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 5, crossAxisSpacing: 10.0, mainAxisSpacing: 10.0),
-    );
-  }
+  Widget _buildGridView(BuildContext context) => GridView.builder(
+        itemCount: 10,
+        shrinkWrap: true,
+        itemBuilder: gridViewContainer,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 5, crossAxisSpacing: 10.0, mainAxisSpacing: 10.0),
+      );
 
-  Widget playerButton(
-      {required String text,
-      required Color containerColor,
-      required Color borderColor}) {
-    return Expanded(
-      child: Container(
-        height: 60,
-        width: 200,
-        decoration: BoxDecoration(
-          // color: Colors.green.withOpacity(0.9),
-          color: containerColor,
-          border: Border.all(color: borderColor, width: 2.0),
+  Widget gridViewContainer(BuildContext context, index) => Container(
+      decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-          ),
-        ),
-      ),
-    );
-  }
+          color: list[index].isSelected ? Colors.grey :Colors.red ),
+      child: Center(
+          child: GestureDetector(
+              onTap: () {
+                clickOnNumber(index);
+
+              },
+              child: Container(
+                height: 50,
+                width: 50,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.black,
+                    )),
+                child: Center(
+                  child: Text(
+                    list[index].data,
+                    style: const TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black),
+                  ),
+                ),
+              ))));
+
+  Widget playerLabel() => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          playerButton(
+              borderColor:
+                  isPlayer1Enabled ? Colors.greenAccent : Colors.deepPurple,
+              containerColor:
+                  isPlayer1Enabled ? Colors.greenAccent : Colors.deepPurple,
+              text: isPlayer1Enabled
+                  ? AppString.label.player1
+                  : AppString.label.player2),
+        ],
+      );
 
   void clickOnNumber(index) {
     if (isPlayer1Enabled) {
       if ((index + 1) == widget.player2) {
         showDialogBox(text: AppString.label.player1);
-
         Timer(
-            Duration(seconds: 3),
+            const Duration(seconds: 2),
             () => Navigator.push(context,
                 MaterialPageRoute(builder: (context) => ChooseNumber())));
-        return;
       }
     } else if (!isPlayer1Enabled) {
       if ((index + 1) == widget.player1) {
         showDialogBox(text: AppString.label.player2);
         Timer(
-            Duration(seconds: 3),
+            Duration(seconds: 2),
             () => Navigator.push(context,
                 MaterialPageRoute(builder: (context) => ChooseNumber())));
-        return;
       }
     }
     isPlayer1Enabled = !isPlayer1Enabled;
+    print("${isPlayer1Enabled}");
+    list[index].isSelected = true;
     setState(() {});
   }
 
@@ -151,7 +132,7 @@ class _SelectNumberState extends State<SelectNumber> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Container(
-            height: 100,
+            height: 150,
             decoration: BoxDecoration(
                 color: Colors.amber,
                 border: Border.all(color: Colors.red),
