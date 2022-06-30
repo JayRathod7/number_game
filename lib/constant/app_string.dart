@@ -8,7 +8,8 @@ class _Label{
   final String player1 = "Player 1";
   final String player2 = "Player 2";
   final String gameLabel = "Please enter your number";
-  final String winner = "won";
+  final String winner = "WON";
+  final String draw = "Draw";
 }
 
 class _Validation {

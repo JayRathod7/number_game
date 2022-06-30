@@ -19,6 +19,8 @@ class SelectNumber extends StatefulWidget {
 class _SelectNumberState extends State<SelectNumber> {
   bool isPlayer1Enabled = false;
   late List<ListItem<String>> list;
+  int lastNumber = 0;
+  bool isResult = false;
 
   @override
   void initState() {
@@ -61,12 +63,13 @@ class _SelectNumberState extends State<SelectNumber> {
   Widget gridViewContainer(BuildContext context, index) => Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: list[index].isSelected ? Colors.grey :Colors.red ),
+          color: list[index].isSelected ? Colors.grey : Colors.red),
       child: Center(
           child: GestureDetector(
               onTap: () {
-                clickOnNumber(index);
-
+                if (!list[index].isSelected) {
+                  clickOnNumber(index);
+                }
               },
               child: Container(
                 height: 50,
@@ -102,7 +105,6 @@ class _SelectNumberState extends State<SelectNumber> {
       );
 
   void clickOnNumber(index) {
-
     if (isPlayer1Enabled) {
       if (index + 1 == widget.player2) {
         showDialogBox(text: AppString.label.player1);
@@ -120,8 +122,17 @@ class _SelectNumberState extends State<SelectNumber> {
                 MaterialPageRoute(builder: (context) => ChooseNumber())));
       }
     }
-    isPlayer1Enabled = !isPlayer1Enabled;
     list[index].isSelected = true;
+    isPlayer1Enabled = !isPlayer1Enabled;
+    lastNumber++;
+    if (lastNumber == 8) {
+      isResult = !isResult;
+      showDialogBox(text: AppString.label.draw);
+      Timer(
+          Duration(seconds: 2),
+          () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => ChooseNumber())));
+    }
     setState(() {});
   }
 
@@ -132,7 +143,7 @@ class _SelectNumberState extends State<SelectNumber> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Container(
-            height: 150,
+            height: !isResult ? 200 : 100,
             decoration: BoxDecoration(
                 color: Colors.amber,
                 border: Border.all(color: Colors.red),
@@ -141,13 +152,15 @@ class _SelectNumberState extends State<SelectNumber> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  AppString.label.winner,
-                  style: TextStyle(
-                      color: Colors.green,
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold),
-                ),
+                !isResult
+                    ? Text(
+                        AppString.label.winner,
+                        style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold),
+                      )
+                    : SizedBox(),
                 SizedBox(
                   height: 20,
                 ),
